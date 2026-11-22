@@ -246,12 +246,19 @@ static void new_transfer(void)
 static int load_block(unsigned block, uchar *dst, unsigned len)
 {
 	/* We may want to get the final block from the previous set */
-	ulong offset = ((int)block - 1) * len + tftp_block_wrap_offset;
+	ulong offset = tftp_block_wrap_offset;
 	ulong tosend = len;
+
+	/* Block 0 is the first block after a 16-bit sequence rollover. */
+	if (block)
+		offset += ((ulong)block - 1) * len;
+
+	if (offset >= net_boot_file_size)
+		return 0;
 
 	tosend = min(net_boot_file_size - offset, tosend);
 	(void)memcpy(dst, (void *)(save_addr + offset), tosend);
-	debug("%s: block=%d, offset=%ld, len=%d, tosend=%ld\n", __func__,
+	debug("%s: block=%u, offset=%lu, len=%u, tosend=%lu\n", __func__,
 	      block, offset, len, tosend);
 	return tosend;
 }
