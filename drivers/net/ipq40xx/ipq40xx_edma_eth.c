@@ -581,6 +581,7 @@ static int ipq40xx_eth_init(struct eth_device *eth_dev, bd_t *this)
 	struct phy_ops *phy_get_ops;
 	static int linkup = 0;
 	int i;
+	int phy_count = PHY_MAX;
 	u8 status;
 	fal_port_speed_t speed;
 	fal_port_duplex_t duplex;
@@ -610,7 +611,10 @@ static int ipq40xx_eth_init(struct eth_device *eth_dev, bd_t *this)
 	 * we will proceed even if single link is up
 	 * else we will return with -1;
 	 */
-	for (i =  0; i < PHY_MAX; i++) {
+#ifdef CONFIG_CISCO_AP1800S
+	phy_count = 1; /* Cisco has a single AR8033 at MDIO address 0. */
+#endif
+	for (i =  0; i < phy_count; i++) {
 		status = phy_get_ops->phy_get_link_status(priv->mac_unit, i);
 		if (status == 0)
 			linkup++;
@@ -912,7 +916,7 @@ int ipq40xx_edma_init(ipq40xx_edma_board_cfg_t *edma_cfg)
 			memcpy(&dev[i]->enetaddr[0],
 				&enet_addr[edma_cfg->unit * 6], 6);
 		}
-		printf("MAC%x addr:%x:%x:%x:%x:%x:%x\n",
+			printf("MAC%x addr:%02x:%02x:%02x:%02x:%02x:%02x\n",
 			edma_cfg->unit, dev[i]->enetaddr[0],
 			dev[i]->enetaddr[1],
 			dev[i]->enetaddr[2],
@@ -984,9 +988,11 @@ int ipq40xx_edma_init(ipq40xx_edma_board_cfg_t *edma_cfg)
 		if(edma_cfg->phy == PHY_INTERFACE_MODE_PSGMII) {
 			qca8075_ess_reset();
 			mdelay(100);
+		#ifndef CONFIG_CISCO_AP1800S
 			psgmii_self_test();
 			mdelay(300);
 			clear_self_test_config();
+			#endif
 		}
 
 		/*

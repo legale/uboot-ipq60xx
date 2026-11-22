@@ -25,6 +25,9 @@
 #endif
 
 #define CONFIG_IPQ40XX
+#ifdef CONFIG_CISCO_AP1800S
+#define CONFIG_ENV_IS_NOWHERE
+#endif
 #define CONFIG_IPQ_NO_RELOC
 #define CONFIG_BOARD_EARLY_INIT_F
 #define CONFIG_SYS_NO_FLASH
@@ -36,7 +39,11 @@
 #define CONFIG_CONS_INDEX		1
 #define CONFIG_FIT_DISABLE_SHA256
 
+#ifdef CONFIG_CISCO_AP1800S
+#define CONFIG_BAUDRATE			9600
+#else
 #define CONFIG_BAUDRATE			115200
+#endif
 #define CONFIG_SYS_BAUDRATE_TABLE	{4800, 9600, 19200, 38400, 57600,\
 								115200}
 #define V_PROMPT			"(IPQ40xx) # "
@@ -51,8 +58,18 @@
 
 #define HAVE_BLOCK_DEVICE
 #define CONFIG_SYS_SDRAM_BASE		0x80000000
+#ifndef CONFIG_SYS_TEXT_BASE
+#ifdef CONFIG_CISCO_AP1800S
+#define CONFIG_SYS_TEXT_BASE		0x84000000
+#else
 #define CONFIG_SYS_TEXT_BASE		0x87300000
+#endif
+#endif
+#ifdef CONFIG_CISCO_AP1800S
 #define CONFIG_SYS_SDRAM_SIZE		0x10000000
+#else
+#define CONFIG_SYS_SDRAM_SIZE		0x10000000
+#endif
 #define CONFIG_SYS_INIT_SP_ADDR 	(CONFIG_SYS_TEXT_BASE -\
 						CONFIG_SYS_MALLOC_LEN -\
 						CONFIG_ENV_SIZE -\
@@ -85,9 +102,13 @@
 #define CONFIG_SYS_SDRAM_END		(CONFIG_SYS_SDRAM_BASE + gd->ram_size)
 
 #define CONFIG_IPQ40XX_ENV
+#ifndef CONFIG_ENV_IS_NOWHERE
 #define CONFIG_ENV_IS_IN_NAND
+#endif
 
+#ifndef CONFIG_CISCO_AP1800S
 #define CONFIG_OF_COMBINE 1
+#endif
 
 #ifndef __ASSEMBLY__
 #include <compiler.h>
@@ -124,7 +145,9 @@ typedef struct {
 #define QCA_BOOT_PARAMS_ADDR	(QCA_KERNEL_START_ADDR + 0x100)
 #endif
 #define CONFIG_FLASH_PROTECT
+#ifndef CONFIG_CISCO_AP1800S
 #define CONFIG_CMD_FLASHWRITE
+#endif
 
 /* Environment */
 #define CONFIG_ARCH_CPU_INIT
@@ -132,7 +155,12 @@ typedef struct {
 #define CONFIG_ENV_OFFSET		board_env_offset
 #define CONFIG_ENV_SIZE		CONFIG_ENV_SIZE_MAX
 #define CONFIG_ENV_RANGE		board_env_range
+#ifdef CONFIG_ENV_IS_NOWHERE
+/* RAM-only environment; leave headroom for this vendor tree's defaults. */
+#define CONFIG_ENV_SIZE_MAX		(512 << 10)
+#else
 #define CONFIG_ENV_SIZE_MAX		(256 << 10) /* 256 KB */
+#endif
 #define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE_MAX + (2048 << 10))
 
 #define CONFIG_CMD_MEMTEST
@@ -223,7 +251,9 @@ typedef struct {
 #define CONFIG_SPI_FLASH_WINBOND
 #define CONFIG_SPI_FLASH_MACRONIX
 #define CONFIG_SPI_FLASH_GIGADEVICE
+#ifndef CONFIG_ENV_IS_NOWHERE
 #define CONFIG_ENV_IS_IN_SPI_FLASH	1
+#endif
 #define CONFIG_ENV_SECT_SIZE        	(64 * 1024)
 
 #define CONFIG_SPI_FLASH_USE_4K_SECTORS
@@ -247,7 +277,11 @@ typedef struct {
 #define CONFIG_MII
 #define CONFIG_CMD_MII
 #define CONFIG_IPADDR   192.168.1.11
+#ifdef CONFIG_CISCO_AP1800S
+#define CONFIG_IPQ_NO_MACS      1
+#else
 #define CONFIG_IPQ_NO_MACS      2
+#endif
 
 #define CONFIG_MTD_DEVICE
 #define CONFIG_MTD_PARTITIONS
@@ -275,7 +309,11 @@ typedef struct {
 #endif
 
 #define CONFIG_FDT_FIXUP_PARTITIONS
+#ifdef CONFIG_CISCO_AP1800S
+#define CONFIG_BOOTCOMMAND ""
+#else
 #define CONFIG_BOOTCOMMAND "bootipq"
+#endif
 
 #define CONFIG_BOOTDELAY	2
 
@@ -291,6 +329,7 @@ typedef struct {
  * CRASH DUMP ENABLE
  */
 
+#ifndef CONFIG_CISCO_AP1800S
 #define CONFIG_QCA_APPSBL_DLOAD	1
 
 #ifdef CONFIG_QCA_APPSBL_DLOAD
@@ -302,6 +341,11 @@ typedef struct {
 #define IPQ_TEMP_DUMP_ADDR 0
 #endif
 
+#else
+/* Explicit upload support for the RAM-chainloaded Cisco console. */
+#define CONFIG_CMD_TFTPPUT
+#endif
+
 #define CONFIG_QCA_KERNEL_CRASHDUMP_ADDRESS	0x87B00000
 #define CONFIG_CPU_CONTEXT_DUMP_SIZE		0x70000
 #define TLV_BUF_OFFSET				0x70000
@@ -310,7 +354,9 @@ typedef struct {
 
 #ifdef CONFIG_QCA_MMC
 #define CONFIG_MMC
+#ifndef CONFIG_ENV_IS_NOWHERE
 #define CONFIG_ENV_IS_IN_MMC
+#endif
 #define CONFIG_CMD_MMC
 #define CONFIG_SDHCI
 #define CONFIG_SDHCI_QCA

@@ -76,7 +76,7 @@ void main_loop(void)
 
 	run_preboot_environment_command();
 
-#ifdef CONFIG_IPQ_ETH_INIT_DEFER
+#if defined(CONFIG_IPQ_ETH_INIT_DEFER) && !defined(CONFIG_CISCO_AP1800S)
 	puts("\nNet:   ");
 	eth_initialize();
 #endif

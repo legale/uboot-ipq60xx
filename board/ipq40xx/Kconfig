@@ -20,4 +20,9 @@ config USB_XHCI_IPQ
 
 config PCI_IPQ
 	bool "ipq40xx pci"
+
+config CISCO_AP1800S
+	bool "Cisco Aironet 1800S Active Sensor"
+	help
+	  Build a RAM-chainloaded U-Boot image for the Cisco AIR-AP1800S.
 endif

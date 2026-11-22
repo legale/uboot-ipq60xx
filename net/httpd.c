@@ -92,6 +92,10 @@ void printChecksumMd5(int address,unsigned int size)
 #endif
 
 int do_http_upgrade(const ulong size, const int upgrade_type){
+#ifdef CONFIG_CISCO_AP1800S
+	puts("HTTP flash update disabled on Cisco AIR-AP1800S\n");
+	return -1;
+#else
 	char buf[96];
 	//printf checksum if defined
 	printChecksumMd5(WEBFAILSAFE_UPLOAD_RAM_ADDRESS,size);
@@ -163,6 +167,7 @@ int do_http_upgrade(const ulong size, const int upgrade_type){
 
 	printf("Executing: %s\n\n", buf);
 	return(run_command(buf, 0));
+#endif
 }
 
 // info about current progress of failsafe mode

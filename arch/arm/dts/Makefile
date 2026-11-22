@@ -48,6 +48,7 @@ dtb-$(CONFIG_ARCH_IPQ806x) += ipq806x-ap148.dtb \
 	ipq806x-ak01.dtb
 
 dtb-$(CONFIG_ARCH_IPQ40xx) += ipq40xx-dk01-c1.dtb \
+		ipq40xx-cisco-ap1800s.dtb \
 		ipq40xx-dk01-c2.dtb \
 		ipq40xx-dk04-c1.dtb \
 		ipq40xx-dk04-c2.dtb \

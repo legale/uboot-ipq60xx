@@ -27,6 +27,7 @@
 #include <malloc.h>
 #include <mapmem.h>
 
+
 /* TODO: Can we move these into arch/ headers? */
 #ifdef CONFIG_8xx
 #include <mpc8xx.h>
@@ -174,8 +175,12 @@ static int display_text_info(void)
 
 static int announce_dram_init(void)
 {
+#ifdef CONFIG_CISCO_AP1800S
+	return 0;
+#else
 	puts("DRAM:  ");
 	return 0;
+#endif
 }
 
 #if defined(CONFIG_MIPS) || defined(CONFIG_PPC) || defined(CONFIG_M68K)
@@ -201,6 +206,10 @@ static int show_dram_config(void)
 {
 	unsigned long long size;
 
+#ifdef CONFIG_CISCO_AP1800S
+	return 0;
+#endif
+
 #ifdef CONFIG_NR_DRAM_BANKS
 	int i;
 
@@ -218,7 +227,13 @@ static int show_dram_config(void)
 	size = gd->ram_size;
 #endif
 
+#ifdef CONFIG_CISCO_AP1800S
+	/* The Cisco board has fixed 256 MiB RAM.  Use a literal here because
+	 * this banner is emitted before the normal console takeover. */
+	puts("256 MiB");
+#else
 	print_size(size, "");
+#endif
 	board_add_ram_info(0);
 	putc('\n');
 

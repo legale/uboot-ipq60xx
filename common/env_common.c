@@ -104,10 +104,15 @@ void set_default_env(const char *s)
 {
 	int flags = 0;
 
+	/* The Cisco chainload target uses a RAM-only environment.  In this
+	 * vendor tree ENV_SIZE is derived from a flash backend and can be
+	 * stale even though the embedded default environment is valid. */
+#ifndef CONFIG_CISCO_AP1800S
 	if (sizeof(default_environment) > ENV_SIZE) {
 		puts("*** Error - default environment is too large\n\n");
 		return;
 	}
+#endif
 
 	if (s) {
 		if (*s == '!') {

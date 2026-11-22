@@ -16,6 +16,12 @@ config NET_RANDOM_ETHADDR
 	  A new MAC address will be generated on every boot and it will
 	  not be added to the environment.
 
+config HTTPD
+	bool "HTTP recovery server"
+	depends on NET
+	help
+	  Include the uIP-based HTTP recovery server.
+
 config NETCONSOLE
 	bool "NetConsole support"
 	help

@@ -103,6 +103,7 @@ const uchar default_environment[] = {
 #ifdef	CONFIG_EXTRA_ENV_SETTINGS
 	CONFIG_EXTRA_ENV_SETTINGS
 #endif
+#ifndef CONFIG_CISCO_AP1800S
 "lf=tftpb 0x44000000 openwrt-gl-ax1800.bin && nand erase 0xa00000 0x7300000 && nand write 0x44000000 0xa00000 $filesize\0"
 "lfq=tftpb 0x44000000 qsdk-gl-ax1800.bin && sf probe; imgaddr=0x44000000 && source 0x44000000:script\0"
 "lfq0=tftpb 0x44000000 nand-ipq6018-apps.img && sf probe; imgaddr=0x44000000 && source 0x44000000:script\0"
@@ -112,6 +113,7 @@ const uchar default_environment[] = {
 "lu_flash_nor=if test x$filesize != x; then sf probe; sf update 0x44000000 0x520000 $filesize; fi\0"
 "lu_flash_nand=if test x$filesize_128k != x; then nand erase 0x800000 0x180000; nand write 0x44000000 0x800000 $filesize_128k; fi\0"
 "lu0=tftpb 0x44000000 openwrt-ipq6018-u-boot.mbn && run lu_flash\0"
+#endif
 
 	"\0"
 #ifdef DEFAULT_ENV_INSTANCE_EMBEDDED

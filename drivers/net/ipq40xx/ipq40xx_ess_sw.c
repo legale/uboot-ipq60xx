@@ -66,6 +66,25 @@ int ipq40xx_ess_sw_init(ipq40xx_edma_board_cfg_t *cfg)
 					S17_TX_FLOW_EN |
 					S17_RX_FLOW_EN);
 
+#ifdef CONFIG_CISCO_AP1800S
+	/* Cisco has one external AR8033 connected through RGMII. */
+	ipq40xx_ess_sw_wr(S17_P4STATUS_REG, S17_PORT_SPEED(2) |
+					S17_PORT_FULL_DUP |
+					S17_TX_FLOW_EN |
+					S17_RX_FLOW_EN |
+					S17_PORT_TX_MAC_EN |
+					S17_PORT_RX_MAC_EN);
+	ipq40xx_ess_sw_wr(S17_P5STATUS_REG, S17_PORT_SPEED(2) |
+					S17_PORT_FULL_DUP |
+					S17_TX_FLOW_EN |
+					S17_RX_FLOW_EN |
+					S17_PORT_TX_MAC_EN |
+					S17_PORT_RX_MAC_EN);
+	ipq40xx_ess_sw_wr(ESS_MIB_REG, 0x100000);
+	ipq40xx_ess_sw_wr(S17_P4LOOKUP_CTRL_REG, 0x34006f);
+	goto ess_finalize;
+#endif
+
 	switch(gd->bd->bi_arch_number) {
 	case MACH_TYPE_IPQ40XX_AP_DK01_1_S1:
 	case MACH_TYPE_IPQ40XX_AP_DK01_1_C1:
@@ -140,6 +159,8 @@ int ipq40xx_ess_sw_init(ipq40xx_edma_board_cfg_t *cfg)
 					gd->bd->bi_arch_number);
 		return -1;
 	}
+
+ess_finalize:
 	mdelay(1);
 	/*
 	 * Enable Rx and Tx mac.

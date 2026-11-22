@@ -91,8 +91,10 @@ __weak void sdi_disable(void)
 int board_init(void)
 {
 	int ret;
+#ifndef CONFIG_ENV_IS_NOWHERE
 	uint32_t start_blocks;
 	uint32_t size_blocks;
+#endif
 
 #ifdef CONFIG_IPQ_REPORT_L2ERR
         u32 l2esr;
@@ -415,6 +417,18 @@ int dram_init(void)
 	struct smem_ram_ptable rtable;
 	int i;
 	int mx = ARRAY_SIZE(rtable.parts);
+
+#ifdef CONFIG_CISCO_AP1800S
+	/*
+	 * The Cisco BTLDR leaves an IPQ40xx SMEM RAM table from an earlier
+	 * boot stage.  On this platform it advertises 1 GiB although the
+	 * board DTS and the installed DDR contain 512 MiB.  Do not use that
+	 * stale table when this image is chainloaded from RAM.
+	 */
+	gd->ram_size = fdtdec_get_uint(gd->fdt_blob, 0, "ddr_size", 512);
+	gd->ram_size <<= 20;
+	return 0;
+#endif
 
 	if (smem_ram_ptable_init(&rtable) > 0) {
 #ifdef CONFIG_SMEM_VERSION_C

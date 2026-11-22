@@ -185,6 +185,9 @@ static int initr_reloc_global_data(void)
 static int initr_serial(void)
 {
 	serial_initialize();
+#ifdef CONFIG_CISCO_AP1800S
+	puts("\r\nDRAM:  256 MiB\r\n\r\n");
+#endif
 	return 0;
 }
 

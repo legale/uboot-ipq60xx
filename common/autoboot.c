@@ -18,6 +18,10 @@
 #include <gl_api.h>
 #include <../drivers/net/ipq6018/ipq6018_ppe.h>
 
+__weak void switch_to_bridge(void)
+{
+}
+
 #ifdef CONFIG_WINDOWS_UPGRADE_SUPPORT
 extern char gl_set_uip_info(void);
 extern void gl_upgrade_probe(void);

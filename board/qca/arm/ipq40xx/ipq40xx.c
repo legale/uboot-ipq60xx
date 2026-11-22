@@ -98,9 +98,16 @@ extern void mmc_env_relocate_spec(void);
 
 extern int ipq40xx_edma_init(ipq40xx_edma_board_cfg_t *edma_cfg);
 extern int ipq_qca8075_phy_init(struct phy_ops **ops);
-extern int ipq40xx_qca8033_phy_init(struct ipq40xx_eth_dev *cfg);
+extern int ipq_qca8033_phy_init(struct phy_ops **ops, u32 phy_id);
 extern void ipq40xx_register_switch(
 	int (*sw_init)(struct phy_ops **ops));
+
+#ifdef CONFIG_CISCO_AP1800S
+static int cisco_qca8033_phy_init(struct phy_ops **ops)
+{
+	return ipq_qca8033_phy_init(ops, 0);
+}
+#endif
 
 void qca_serial_init(struct ipq_serial_platdata *plat)
 {
@@ -195,6 +202,9 @@ int board_eth_init(bd_t *bis)
 		qca_gpio_init(gpio_node);
 
 	ipq40xx_edma_common_init();
+	#ifdef CONFIG_CISCO_AP1800S
+	ipq40xx_register_switch(cisco_qca8033_phy_init);
+	#else
 	switch (gd->bd->bi_arch_number) {
 	case MACH_TYPE_IPQ40XX_AP_DK01_1_S1:
 	case MACH_TYPE_IPQ40XX_AP_DK01_1_C2:
@@ -242,6 +252,7 @@ int board_eth_init(bd_t *bis)
 	default:
 		break;
 	}
+	#endif
 	node = fdt_path_offset(gd->fdt_blob, "/edma_cfg");
 	if (node < 0) {
 		printf("Error: edma_cfg not specified in dts");
@@ -317,9 +328,11 @@ int board_mmc_init(bd_t *bis)
 		return -1;
 	}
 #endif
+#ifndef CONFIG_ENV_IS_NOWHERE
 	if (!ret && sfi->flash_type == SMEM_BOOT_MMC_FLASH) {
 		ret = board_mmc_env_init(mmc_host);
 	}
+#endif
 
 	return ret;
 }

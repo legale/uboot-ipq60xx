@@ -109,7 +109,12 @@ void nand_init(void)
 		nand_init_chip(i);
 #endif
 
+#ifdef CONFIG_CISCO_AP1800S
+	/* Cisco AIR-AP1800S has a fixed 128 MiB NAND device. */
+	puts("128 MiB\n");
+#else
 	printf("%lu MiB\n", total_nand_size / 1024);
+#endif
 
 #ifdef CONFIG_SYS_NAND_SELECT_DEVICE
 	/*

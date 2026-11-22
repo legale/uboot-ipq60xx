@@ -14,6 +14,22 @@
 
 static int netboot_common(enum proto_t, cmd_tbl_t *, int, char * const []);
 
+#ifdef CONFIG_CISCO_AP1800S
+static int cisco_eth_initialized;
+
+static int cisco_init_eth(void)
+{
+	if (!cisco_eth_initialized) {
+		if (eth_initialize() <= 0) {
+			printf("Cisco Ethernet initialization failed\n");
+			return CMD_RET_FAILURE;
+		}
+		cisco_eth_initialized = 1;
+	}
+	return CMD_RET_SUCCESS;
+}
+#endif
+
 int do_httpd(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[]){
 	if (argc < 2)
 		return CMD_RET_USAGE;
@@ -196,6 +212,12 @@ static int netboot_common(enum proto_t proto, cmd_tbl_t *cmdtp, int argc,
 	int   size;
 	ulong addr;
 
+#ifdef CONFIG_CISCO_AP1800S
+	/* Initialize Ethernet only when a network command is explicitly used. */
+	if (cisco_init_eth() != CMD_RET_SUCCESS)
+		return CMD_RET_FAILURE;
+#endif
+
 	/* pre-set load_addr */
 	s = getenv("loadaddr");
 	if (s != NULL)
@@ -278,6 +300,11 @@ static int do_ping(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	if (argc < 2)
 		return CMD_RET_USAGE;
+
+#ifdef CONFIG_CISCO_AP1800S
+	if (cisco_init_eth() != CMD_RET_SUCCESS)
+		return CMD_RET_FAILURE;
+#endif
 
 	net_ping_ip = string_to_ip(argv[1]);
 	if (net_ping_ip.s_addr == 0)

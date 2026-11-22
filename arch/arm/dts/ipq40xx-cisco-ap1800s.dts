@@ -1,0 +1,42 @@
+/*
+ * U-Boot control device tree for Cisco AIR-AP1800S.
+ *
+ * This uses the vendor IPQ40xx U-Boot bindings. The Linux device tree
+ * extracted from the factory image is kept separately and must not be
+ * used as U-Boot's control FDT.
+ */
+
+/dts-v1/;
+
+#include "ipq40xx-dk04.dtsi"
+#include "nand_gpio.dtsi"
+
+/ {
+	model = "Cisco Aironet 1800S Active Sensor";
+	compatible = "cisco,air-ap1800s", "qca,ipq40xx-dk04", "qca,ipq40xx";
+
+	/* Cisco BTLDR reports 254 MiB usable, i.e. 256 MiB installed. */
+	ddr_size = <256>;
+	config_name = "config@cisco.air-ap1800s";
+
+	aliases {
+		console = "/serial@78af000";
+	};
+
+	/* Physical debug console: BLSP UART0 on GPIO16/GPIO17. */
+	serial@78af000 {
+		bit_rate = <0x99>; /* 9600 baud for Qualcomm UART-DM */
+		status = "ok";
+	};
+
+	/* Do not initialize the second UART during RAM chainload. */
+	serial@78b0000 {
+		status = "disabled";
+	};
+
+	/* Cisco uses one AR8033 on RGMII, at MDIO address 0. */
+	edma_cfg {
+		phy = <7>; /* PHY_INTERFACE_MODE_RGMII */
+		phy_name = "IPQ MDIO0";
+	};
+};
