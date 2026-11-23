@@ -532,8 +532,10 @@ static void tftp_handler(uchar *pkt, unsigned dest, struct in_addr sip,
 				tftp_prev_block = tftp_cur_block;
 				tftp_cur_block = (unsigned short)(block + 1);
 				update_block_number();
-				if (ack_ok)
+				if (ack_ok) {
+					timeout_count = 0;
 					tftp_send(); /* Send next data block */
+				}
 			}
 		}
 #endif
