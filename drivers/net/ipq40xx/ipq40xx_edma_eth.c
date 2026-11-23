@@ -666,6 +666,9 @@ static int ipq40xx_eth_snd(struct eth_device *dev, void *packet, int length)
 
 	num_tpds_needed = 1;
 
+	/* Reclaim completed descriptors before checking ring availability. */
+	ipq40xx_edma_tx_complete(c_info, priv->mac_unit);
+
 	if ((num_tpds_needed >
 	ipq40xx_edma_tpd_available(c_info, priv->mac_unit))) {
 		debugf("Not enough descriptors available");
