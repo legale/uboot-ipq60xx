@@ -25,6 +25,7 @@ void arp_init(void);
 void arp_request(void);
 void arp_raw_request(struct in_addr source_ip, const uchar *targetEther,
 	struct in_addr target_ip);
+void arp_gratuitous(void);
 int arp_timeout_check(void);
 void arp_receive(struct ethernet_hdr *et, struct ip_udp_hdr *ip, int len);
 

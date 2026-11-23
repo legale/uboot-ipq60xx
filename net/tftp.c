@@ -11,6 +11,7 @@
 #include <mapmem.h>
 #include <net.h>
 #include <net/tftp.h>
+#include "arp.h"
 #include "bootp.h"
 #ifdef CONFIG_SYS_DIRECT_FLASH_TFTP
 #include <flash.h>
@@ -890,6 +891,10 @@ void tftp_start(enum proto_t protocol)
 
 	/* zero out server ether in case the server ip has changed */
 	memset(net_server_ethaddr, 0, 6);
+#ifdef CONFIG_CMD_TFTPPUT
+	if (protocol == TFTPPUT)
+		arp_gratuitous();
+#endif
 	/* Revert tftp_block_size to dflt */
 	tftp_block_size = TFTP_BLOCK_SIZE;
 #ifdef CONFIG_MCAST_TFTP

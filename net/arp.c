@@ -79,6 +79,11 @@ void arp_raw_request(struct in_addr source_ip, const uchar *target_ethaddr,
 	net_send_packet(arp_tx_packet, eth_hdr_size + ARP_HDR_SIZE);
 }
 
+void arp_gratuitous(void)
+{
+	arp_raw_request(net_ip, net_ethaddr, net_ip);
+}
+
 void arp_request(void)
 {
 	if ((net_arp_wait_packet_ip.s_addr & net_netmask.s_addr) !=
