@@ -326,7 +326,7 @@ typedef struct {
 
 #define CONFIG_FDT_FIXUP_PARTITIONS
 #ifdef CONFIG_CISCO_AP1800S
-#define CONFIG_BOOTCOMMAND ""
+#define CONFIG_BOOTCOMMAND "ubi part fs; ubi read 0x88000000 kernel; bootm 0x88000000"
 #else
 #define CONFIG_BOOTCOMMAND "bootipq"
 #endif

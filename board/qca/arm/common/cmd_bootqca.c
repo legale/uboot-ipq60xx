@@ -807,6 +807,9 @@ static int do_boot_unsignedimg(cmd_tbl_t *cmdtp, int flag, int argc, char *const
 
 static int do_bootipq(cmd_tbl_t *cmdtp, int flag, int argc, char *const argv[])
 {
+#ifdef CONFIG_CISCO_AP1800S
+	return run_command("ubi part fs; ubi read 0x88000000 kernel; bootm 0x88000000", 0);
+#else
 	int ret;
 	char buf = 0;
 	/*
@@ -835,6 +838,7 @@ static int do_bootipq(cmd_tbl_t *cmdtp, int flag, int argc, char *const argv[])
 #endif
 	}
 	return ret;
+#endif
 }
 
 U_BOOT_CMD(bootipq, 2, 0, do_bootipq,
