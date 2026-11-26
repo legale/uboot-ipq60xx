@@ -328,7 +328,7 @@ int board_mmc_init(bd_t *bis)
 		return -1;
 	}
 #endif
-#ifndef CONFIG_ENV_IS_NOWHERE
+#if !defined(CONFIG_ENV_IS_NOWHERE) && !defined(CONFIG_ENV_IS_IN_UBI)
 	if (!ret && sfi->flash_type == SMEM_BOOT_MMC_FLASH) {
 		ret = board_mmc_env_init(mmc_host);
 	}

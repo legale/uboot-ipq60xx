@@ -26,7 +26,12 @@
 
 #define CONFIG_IPQ40XX
 #ifdef CONFIG_CISCO_AP1800S
-#define CONFIG_ENV_IS_NOWHERE
+#define CONFIG_ENV_IS_IN_UBI
+#define CONFIG_ENV_UBI_PART		"fs"
+#define CONFIG_ENV_UBI_VOLUME		"ubootenv"
+#define CONFIG_ENV_UBI_VOLUME_REDUND	"ubootenv2"
+#define MTDIDS_DEFAULT			"nand0=nand0"
+#define MTDPARTS_DEFAULT		"mtdparts=nand0:0x8000000@0(fs)"
 #endif
 #define CONFIG_IPQ_NO_RELOC
 #define CONFIG_BOARD_EARLY_INIT_F
@@ -101,8 +106,8 @@
 #define CONFIG_TZ_END_ADDR		0x88000000
 #define CONFIG_SYS_SDRAM_END		(CONFIG_SYS_SDRAM_BASE + gd->ram_size)
 
+#if !defined(CONFIG_ENV_IS_NOWHERE) && !defined(CONFIG_ENV_IS_IN_UBI)
 #define CONFIG_IPQ40XX_ENV
-#ifndef CONFIG_ENV_IS_NOWHERE
 #define CONFIG_ENV_IS_IN_NAND
 #endif
 
@@ -152,6 +157,11 @@ typedef struct {
 /* Environment */
 #define CONFIG_ARCH_CPU_INIT
 #define CONFIG_BOARD_LATE_INIT
+#ifdef CONFIG_ENV_IS_IN_UBI
+#define CONFIG_ENV_SIZE_MAX		0x1f000
+#define CONFIG_ENV_SIZE			CONFIG_ENV_SIZE_MAX
+#define CONFIG_ENV_RANGE		CONFIG_ENV_SIZE_MAX
+#else
 #define CONFIG_ENV_OFFSET		board_env_offset
 #define CONFIG_ENV_SIZE		CONFIG_ENV_SIZE_MAX
 #define CONFIG_ENV_RANGE		board_env_range
@@ -160,6 +170,7 @@ typedef struct {
 #define CONFIG_ENV_SIZE_MAX		(512 << 10)
 #else
 #define CONFIG_ENV_SIZE_MAX		(256 << 10) /* 256 KB */
+#endif
 #endif
 #define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE_MAX + (2048 << 10))
 
@@ -219,7 +230,9 @@ typedef struct {
  * BAM is enabled by default.109
  */
 #define CONFIG_QPIC_NAND
+#ifndef CONFIG_CMD_NAND
 #define CONFIG_CMD_NAND
+#endif
 #define CONFIG_SYS_NAND_ONFI_DETECTION
 
 #define CONFIG_SYS_MAX_NAND_DEVICE      (CONFIG_IPQ_MAX_NAND_DEVICE + \
@@ -251,7 +264,7 @@ typedef struct {
 #define CONFIG_SPI_FLASH_WINBOND
 #define CONFIG_SPI_FLASH_MACRONIX
 #define CONFIG_SPI_FLASH_GIGADEVICE
-#ifndef CONFIG_ENV_IS_NOWHERE
+#if !defined(CONFIG_ENV_IS_NOWHERE) && !defined(CONFIG_ENV_IS_IN_UBI)
 #define CONFIG_ENV_IS_IN_SPI_FLASH	1
 #endif
 #define CONFIG_ENV_SECT_SIZE        	(64 * 1024)
@@ -354,7 +367,7 @@ typedef struct {
 
 #ifdef CONFIG_QCA_MMC
 #define CONFIG_MMC
-#ifndef CONFIG_ENV_IS_NOWHERE
+#if !defined(CONFIG_ENV_IS_NOWHERE) && !defined(CONFIG_ENV_IS_IN_UBI)
 #define CONFIG_ENV_IS_IN_MMC
 #endif
 #define CONFIG_CMD_MMC

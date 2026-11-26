@@ -44,9 +44,11 @@ extern struct sdhci_host mmc_host;
 #endif
 #endif
 
+#ifndef CONFIG_ENV_IS_IN_UBI
 env_t *env_ptr;
 char *env_name_spec;
 int (*saveenv)(void);
+#endif
 
 loff_t board_env_offset;
 loff_t board_env_range;
@@ -91,7 +93,7 @@ __weak void sdi_disable(void)
 int board_init(void)
 {
 	int ret;
-#ifndef CONFIG_ENV_IS_NOWHERE
+#if !defined(CONFIG_ENV_IS_NOWHERE) && !defined(CONFIG_ENV_IS_IN_UBI)
 	uint32_t start_blocks;
 	uint32_t size_blocks;
 #endif
@@ -136,7 +138,7 @@ int board_init(void)
 		}
 	}
 
-#ifndef CONFIG_ENV_IS_NOWHERE
+#if !defined(CONFIG_ENV_IS_NOWHERE) && !defined(CONFIG_ENV_IS_IN_UBI)
 	switch (sfi->flash_type) {
 	case SMEM_BOOT_NAND_FLASH:
 		nand_env_device = CONFIG_NAND_FLASH_INFO_IDX;
