@@ -317,6 +317,9 @@ static void boot_jump_linux(bootm_headers_t *images, int flag)
 		"...\n", (ulong) kernel_entry);
 	bootstage_mark(BOOTSTAGE_ID_RUN_OS);
 	announce_and_cleanup(fake);
+#ifdef CONFIG_CISCO_AP1800S
+	mdelay(50);
+#endif
 
 	if (IMAGE_ENABLE_OF_LIBFDT && images->ft_len)
 		r2 = (unsigned long)images->ft_addr;
