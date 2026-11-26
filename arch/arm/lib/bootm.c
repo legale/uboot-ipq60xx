@@ -315,14 +315,14 @@ static void boot_jump_linux(bootm_headers_t *images, int flag)
 
 	debug("## Transferring control to Linux (at address %08lx)" \
 		"...\n", (ulong) kernel_entry);
-#ifdef CONFIG_CISCO_AP1800S
-	mdelay(100);
-#endif
+	printf("## pre-cleanup: ep=%08lx machid=%08lx r2=%08lx bootargs=%s\n",
+	       (ulong)kernel_entry, machid,
+	       (IMAGE_ENABLE_OF_LIBFDT && images->ft_len) ?
+	       (unsigned long)images->ft_addr : gd->bd->bi_boot_params,
+	       getenv("bootargs") ? getenv("bootargs") : "(null)");
 	bootstage_mark(BOOTSTAGE_ID_RUN_OS);
 	announce_and_cleanup(fake);
-#ifdef CONFIG_CISCO_AP1800S
-	mdelay(50);
-#endif
+	printf("## post-cleanup, jumping to kernel...\n");
 
 	if (IMAGE_ENABLE_OF_LIBFDT && images->ft_len)
 		r2 = (unsigned long)images->ft_addr;
