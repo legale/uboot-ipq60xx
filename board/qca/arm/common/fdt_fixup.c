@@ -536,6 +536,9 @@ __weak void fdt_fixup_del_qca_secure_prop(void *blob)
  */
 int ft_board_setup(void *blob, bd_t *bd)
 {
+#ifdef CONFIG_CISCO_AP1800S
+	return 0;
+#endif
 	u64 memory_start = CONFIG_SYS_SDRAM_BASE;
 	u64 memory_size = gd->ram_size;
 	unsigned long gmac_no;
