@@ -26,6 +26,12 @@
 
 # Build tree
 /build-*
+/build/
+/tmp/
+
+# Local notes and review artifacts
+/docs/research.md
+/docs/review*.md
 
 #
 # Top-level generic files
