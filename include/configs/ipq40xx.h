@@ -32,6 +32,9 @@
 #define CONFIG_ENV_UBI_VOLUME_REDUND	"ubootenv2"
 #define MTDIDS_DEFAULT			"nand0=nand0"
 #define MTDPARTS_DEFAULT		"mtdparts=nand0:0x8000000@0(fs)"
+#define CONFIG_EXTRA_ENV_SETTINGS	\
+	"mtdids=" MTDIDS_DEFAULT "\0"	\
+	"mtdparts=" MTDPARTS_DEFAULT "\0"
 #endif
 #define CONFIG_IPQ_NO_RELOC
 #define CONFIG_BOARD_EARLY_INIT_F
