@@ -315,6 +315,9 @@ static void boot_jump_linux(bootm_headers_t *images, int flag)
 
 	debug("## Transferring control to Linux (at address %08lx)" \
 		"...\n", (ulong) kernel_entry);
+#ifdef CONFIG_CISCO_AP1800S
+	mdelay(100);
+#endif
 	bootstage_mark(BOOTSTAGE_ID_RUN_OS);
 	announce_and_cleanup(fake);
 #ifdef CONFIG_CISCO_AP1800S
