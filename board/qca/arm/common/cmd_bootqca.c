@@ -808,7 +808,11 @@ static int do_boot_unsignedimg(cmd_tbl_t *cmdtp, int flag, int argc, char *const
 static int do_bootipq(cmd_tbl_t *cmdtp, int flag, int argc, char *const argv[])
 {
 #ifdef CONFIG_CISCO_AP1800S
-	return run_command("ubi part fs; ubi read 0x88000000 kernel; bootm 0x88000000", 0);
+	return run_command("setenv mtdids nand0=nand0 && "
+			   "setenv mtdparts mtdparts=nand0:0x8000000@0x0(fs) && "
+			   "ubi part fs && "
+			   "ubi read 0x88000000 kernel && "
+			   "bootm 0x88000000", 0);
 #else
 	int ret;
 	char buf = 0;
